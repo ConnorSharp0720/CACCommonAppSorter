@@ -150,6 +150,8 @@ public class CacEvent
     
     public ArrayList<Integer> selectAlternatesOption2(ArrayList<Integer> alreadyPlaced)
     {
+        
+        
         ArrayList<Integer> placedIds = alreadyPlaced;
         double highScore;
         int alternateIndex;
