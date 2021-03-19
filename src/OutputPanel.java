@@ -3,6 +3,8 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 public class OutputPanel extends JPanel
 {
@@ -22,8 +24,12 @@ public class OutputPanel extends JPanel
         resultDescription = new JTextArea(COLUMN_FIELD_HEIGHT, COLUMN_FIELD_WIDTH);
         resultDescription.setEditable(false);
         add(resultDescription);
-        setBackground(new Color(0, 128, 210));
-        setBorder(BorderFactory.createTitledBorder("Output"));
+        setBackground(new Color(0, 47, 85));
+        TitledBorder titledBorder = new TitledBorder("Output");
+        titledBorder.setTitleColor(Color.white);
+        Border whiteline = BorderFactory.createLineBorder(Color.white);
+        titledBorder.setBorder(whiteline);
+        setBorder(titledBorder);
     }
     
     /**

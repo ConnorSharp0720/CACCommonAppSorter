@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -17,10 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
-
-
-
-
 public class CommonAppFrame extends JFrame
 {
     /** Menu bar */
@@ -29,6 +26,8 @@ public class CommonAppFrame extends JFrame
     private FileMenuBar fileMenuBarApp;
     /** Parameter panel */
     private ParameterPanel parameters;
+    /** Statistics panel */
+    private AlternatesPanel alternates;
     /** Button panel */
     private JPanel buttonPanel;
     /** Calculate button */
@@ -47,7 +46,9 @@ public class CommonAppFrame extends JFrame
         super("Common App Calculator");
         // styling for frame 
         
+        
         setLayout(new BorderLayout());
+        setSize(800,400);
         setResizable(true);
         buildButtonPanel();
         
@@ -57,21 +58,34 @@ public class CommonAppFrame extends JFrame
         fileMenuBarApp = new FileMenuBar("Applicant Preferences");
         outputPanel = new OutputPanel();
         parameters = new ParameterPanel();
-        add(fileMenuBarCom, BorderLayout.LINE_START);
-        add(parameters, BorderLayout.PAGE_START);
+        alternates = new AlternatesPanel();
+        
+        JPanel header = new JPanel();
+        header.setLayout(new GridLayout(1,2));
+        header.add(fileMenuBarCom);
+        header.add(fileMenuBarApp);
+        
+        JPanel center = new JPanel();
+        center.setLayout(new GridLayout(2,1));
+        center.add(parameters);
+        center.add(outputPanel);
+        add(header, BorderLayout.PAGE_START);
+        //add(fileMenuBarCom, BorderLayout.LINE_START);
+        add(center, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.PAGE_END);
-        add(fileMenuBarApp, BorderLayout.LINE_END);
-        add(outputPanel, BorderLayout.CENTER);
+        add(alternates, BorderLayout.LINE_START);
+        //add(outputPanel, BorderLayout.PAGE_END);
         
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
+        //pack();
         
     }
     
     private void buildButtonPanel()
     {   
         buttonPanel = new JPanel();
+        //buttonPanel.setLayout(new GridLayout(2,1));
         
         sortButton = new JButton("Sort Applicants");
         exitButton = new JButton("Exit");
@@ -81,7 +95,8 @@ public class CommonAppFrame extends JFrame
         // adds the buttons
         buttonPanel.add(sortButton);
         buttonPanel.add(exitButton);
-        buttonPanel.setBackground(new Color(102, 178, 210));
+        
+        buttonPanel.setBackground(new Color(25, 126, 204));
     }
     
     private class ExitButtonListner implements ActionListener
@@ -110,6 +125,7 @@ public class CommonAppFrame extends JFrame
             ArrayList<String> applicantFiles = fileMenuBarApp.getFileList();
             ArrayList<CacEvent> eventList = new ArrayList<CacEvent>();
             ArrayList<String> params = parameters.getParamIds();
+            String altMethod = alternates.getAlternateType();
             
             for(String paramType: params)
             {
@@ -119,7 +135,8 @@ public class CommonAppFrame extends JFrame
             
             SortCalculator data = new SortCalculator(committeeFiles.toArray(new String[committeeFiles.size()]), applicantFiles.toArray(new String[applicantFiles.size()]), eventList);
             data.sortApplicants();
-            //String output = "";
+            data.selectAlts(altMethod);
+            String output = "";
             String fileName;
             for(CacEvent event: eventList)
             {
@@ -129,15 +146,21 @@ public class CommonAppFrame extends JFrame
                     File myObj = new File(fileName);
                     if (myObj.createNewFile()) 
                     {
-                      System.out.println("File created: " + myObj.getName());
+                        output += "File created: " + myObj.getName() + "\n";
+                        outputPanel.updateData(output);
+                        System.out.println("File created: " + myObj.getName());
                     } 
                     else 
                     {
-                      System.out.println("File already exists.");
+                        output += "File already exists. \n";
+                        outputPanel.updateData(output);
+                        System.out.println("File already exists.");
                     }
                 }
                 catch (IOException f) 
                 {
+                    output += "An error occurred \n" + f.toString() + "\n";
+                    outputPanel.updateData(output);
                     System.out.println("An error occurred.");
                     f.printStackTrace();
                 }
@@ -147,10 +170,14 @@ public class CommonAppFrame extends JFrame
                     FileWriter myWriter = new FileWriter(fileName);
                     myWriter.write(event.toString());
                     myWriter.close();
+                    output += "Successfully wrote to the file. \n";
+                    outputPanel.updateData(output);
                     System.out.println("Successfully wrote to the file.");
                 } 
                 catch (IOException g) 
                 {
+                    output += "An error occurred \n" + g.toString() + "\n";
+                    outputPanel.updateData(output);
                     System.out.println("An error occurred.");
                     g.printStackTrace();
                 }
@@ -194,6 +221,7 @@ public class CommonAppFrame extends JFrame
          */
         public FileMenuBar(String lable)
         {
+            
             listOfFiles = new ArrayList<>();
             // Create the menu and add it to the menu bar
             menu = new JMenu(lable);
@@ -224,6 +252,7 @@ public class CommonAppFrame extends JFrame
             {
                 public void actionPerformed(ActionEvent e)
                 {
+                    String output = "";
                     // Ask for files
                     int returnVal = fileChooser.showOpenDialog(menuOpen);
                     // Did we get one?
@@ -238,6 +267,8 @@ public class CommonAppFrame extends JFrame
                             {
                                 String fileName = file.toString();
                                 System.out.println(fileName);
+                                output += "\n Opened file: " + fileName;
+                                outputPanel.updateData(output);
                                 listOfFiles.add(fileName);
                             }
                         }

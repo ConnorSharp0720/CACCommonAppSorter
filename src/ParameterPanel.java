@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 /**
  * 
@@ -61,7 +63,7 @@ public class ParameterPanel extends JPanel
         System.out.println("Building Parameter panel");
 
         // Create a GridLayout Manager
-        setLayout(new GridLayout(5,3));
+        setLayout(new GridLayout(7,2));
         
         // initializes check boxes
         cobo = new JCheckBox(COBO);
@@ -85,6 +87,7 @@ public class ParameterPanel extends JPanel
         add(concertSeries);
         add(filmSeries);
         add(hslc);
+        add(oudm);
         add(scandals);
         add(spark);
         add(springFamilyWeekend);
@@ -95,11 +98,29 @@ public class ParameterPanel extends JPanel
         add(using);
         add(hoco);
         
+        cobo.setForeground(new Color(255, 255, 255));
+        concertSeries.setForeground(new Color(255, 255, 255));
+        filmSeries.setForeground(new Color(255, 255, 255));
+        hslc.setForeground(new Color(255, 255, 255));
+        oudm.setForeground(new Color(255, 255, 255));
+        scandals.setForeground(new Color(255, 255, 255));
+        spark.setForeground(new Color(255, 255, 255));
+        springFamilyWeekend.setForeground(new Color(255, 255, 255));
+        speakersBureau.setForeground(new Color(255, 255, 255));
+        prComm.setForeground(new Color(255, 255, 255));
+        fallFamilyWeekend.setForeground(new Color(255, 255, 255));
+        welcomeWeek.setForeground(new Color(255, 255, 255));
+        using.setForeground(new Color(255, 255, 255));
+        hoco.setForeground(new Color(255, 255, 255));
         
         
         // styling for panel
-        setBackground(new Color(153, 204, 210));
-        setBorder(BorderFactory.createTitledBorder("Param"));
+        setBackground(new Color(0, 47, 85));
+        TitledBorder titledBorder = new TitledBorder("CAC Events");
+        titledBorder.setTitleColor(new Color(255, 255, 255));
+        Border whiteline = BorderFactory.createLineBorder(new Color(255, 255, 255));
+        titledBorder.setBorder(whiteline);
+        setBorder(titledBorder);
     }
     
     /**

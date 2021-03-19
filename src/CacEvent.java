@@ -8,6 +8,8 @@ public class CacEvent
     /** Array of applicants */
     private ArrayList<Applicant> applicantList = new ArrayList<Applicant>();
     
+    private ArrayList<String> alternateCommittees = new ArrayList<String>();
+    
     /** Number of alternates the event needs */
     private int alternatesNum;
     
@@ -22,6 +24,11 @@ public class CacEvent
     public void addApplicant(Applicant applicant)
     {
         applicantList.add(applicant);
+    }
+    
+    public void addAltCommittee(String committee)
+    {
+        alternateCommittees.add(committee);
     }
     
     public boolean doesApplicantExist(Applicant applicant)
@@ -124,7 +131,7 @@ public class CacEvent
         return output;
     }
     
-    public ArrayList<Integer> selectAlternates(ArrayList<Integer> alreadyPlaced)
+    public ArrayList<Integer> selectAlternatesScore(ArrayList<Integer> alreadyPlaced)
     {
         ArrayList<Integer> placedIds = alreadyPlaced;
         double highScore;
@@ -148,27 +155,46 @@ public class CacEvent
         return placedIds;
     }
     
-    public ArrayList<Integer> selectAlternatesOption2(ArrayList<Integer> alreadyPlaced)
+    public ArrayList<Integer> selectAlternatesPosition(ArrayList<Integer> alreadyPlaced)
     {
-        
-        
         ArrayList<Integer> placedIds = alreadyPlaced;
         double highScore;
+        double backupHighScore;
+        
         int alternateIndex;
-        for(int i = 0; i < alternatesNum; i ++)
+        int backupIndex;
+        for(int i = 0; i < alternateCommittees.size(); i ++)
         {
-            alternateIndex = 0;
+            alternateIndex = -1;
             highScore = -10000.0;
+            backupIndex = 0;
+            backupHighScore = -10000.0;
             for(int k = 0; k < applicantList.size(); k++)
             {
-                if(!placedIds.contains(applicantList.get(k).getIdNum()) && applicantList.get(k).isAlternate() && applicantList.get(k).getScore() > highScore)
+                if(!placedIds.contains(applicantList.get(k).getIdNum()) && applicantList.get(k).isAlternate())
                 {
-                    highScore = applicantList.get(k).getScore();
-                    alternateIndex = k;
+                    if (applicantList.get(k).getScore() > highScore && applicantList.get(k).getCommittee().compareTo(alternateCommittees.get(i)) == 0)
+                    {
+                        highScore = applicantList.get(k).getScore();
+                        alternateIndex = k;
+                    }
+                    else if (applicantList.get(k).getScore() > backupHighScore)
+                    {
+                        backupHighScore = applicantList.get(k).getScore();
+                        backupIndex = k;
+                    }
                 }
             }
-            applicantList.get(alternateIndex).setAccepted(true);
-            placedIds.add(applicantList.get(alternateIndex).getIdNum());
+            if (alternateIndex >= 0)
+            {
+                applicantList.get(alternateIndex).setAccepted(true);
+                placedIds.add(applicantList.get(alternateIndex).getIdNum());
+            }
+            else
+            {
+                applicantList.get(backupIndex).setAccepted(true);
+                placedIds.add(applicantList.get(backupIndex).getIdNum());
+            }
         }
         
         return placedIds;

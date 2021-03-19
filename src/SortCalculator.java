@@ -162,7 +162,8 @@ public class SortCalculator
     {     
         int multiPref; 
         String roundPref;
-        for(int round = 0; round < 10; round++)
+        
+        for(int round = 0; round < 15; round++)
         {
             for(Applicant applicant: applicantList)
             {
@@ -188,6 +189,7 @@ public class SortCalculator
                             event.addApplicant(applicant);
                             System.out.println("test");
                             event.incrementAlternatesNeeded();
+                            event.addAltCommittee(applicant.getCommittee());
                         }
                     }
                 }
@@ -224,11 +226,6 @@ public class SortCalculator
                 }
             }
         }
-        
-        for(CacEvent event: eventList)
-        {
-            alreadyPlaced = event.selectAlternates(alreadyPlaced);
-        }
     }
     
     public int applicantHasMultiPref(Applicant applicant)
@@ -258,6 +255,24 @@ public class SortCalculator
         }
         return foundInList;
     }
+
     
+    public void selectAlts(String method)
+    {
+        if (method.compareTo("SCORE") == 0)
+        {
+            for(CacEvent event: eventList)
+            {
+                alreadyPlaced = event.selectAlternatesScore(alreadyPlaced);
+            }
+        }
+        else 
+        {
+            for(CacEvent event: eventList)
+            {
+                alreadyPlaced = event.selectAlternatesPosition(alreadyPlaced);
+            }
+        }
+    }
 
 }
